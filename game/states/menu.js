@@ -6,44 +6,38 @@ Menu.prototype = {
   preload: function() {
 
     // Load bitmap fonts.
-    this.game.load.bitmapFont('new-york-escape-3d',
-      'assets/fonts/new-york-escape-3d.png', 'assets/fonts/new-york-escape-3d.fnt');
     this.game.load.bitmapFont('new-york-escape-cond',
       'assets/fonts/new-york-escape-cond.png', 'assets/fonts/new-york-escape-cond.fnt');
-    this.game.load.bitmapFont('new-york-escape-grad',
-      'assets/fonts/new-york-escape-grad.png', 'assets/fonts/new-york-escape-grad.fnt');
+    // Load images.
+    this.game.load.image('bluecross-logo-large', 'assets/images/cross-large.png');
   },
   create: function() {
 
     // Set stage color.
     this.game.stage.backgroundColor = '#FFFFFF';
 
+    // Create game title.
     this.diseaseTxt = this.game.add.bitmapText(this.game.world.centerX,
-      (this.game.world.centerY - 100), 'new-york-escape-cond', 'Disease', 110);
-
+      (this.game.world.centerY - 200), 'new-york-escape-cond', 'Disease', 130);
     this.diseaseTxt.anchor.set(0.5);
 
+
     this.defenderTxt = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, 'new-york-escape-cond', 'Defender+', 110);
+      this.game.world.centerY -100, 'new-york-escape-cond', 'Defender', 130);
     this.defenderTxt.anchor.set(0.5);
 
-
-    this.startTxt =  this.game.add.text(this.game.world.centerX, (this.game.world.centerX + 100),
+    // CLick start instruction.
+    this.startTxt =  this.game.add.text(this.game.world.centerX, (this.game.world.centerY + 200),
       'Click to start defending', {
-        font: '30px arial', fill: '#0078A7'})
-
-    //this.startTxt = this.game.add.bitmapText(this.game.world.centerX,
-      //(this.game.world.centerY + 100), 'new-york-escape-cond', 'Click to start defending', 25);
+        font: '18pt Lato',
+        fill: '#0093d0'
+      })
 
     this.startTxt.anchor.set(0.5);
 
-  },
-
-  createLato: function() {
-
-    this.startTxt =  this.game.add.text(this.game.world.centerX, (this.game.world.centerX + 100),
-      'Test', {
-        font: '30px Lato', fill: '#0078A7'})
+    // Cross
+    var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 50, 'bluecross-logo-large');
+    logo.anchor.set(0.5);
   },
 
   update: function() {
