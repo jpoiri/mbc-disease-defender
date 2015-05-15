@@ -39,7 +39,7 @@ Menu.prototype = {
       {char: 'r', pos: [667,135]}
     ]
 
-    this.animatedChars = [];
+    this.animatedChars = []; 
 
     // Create animated letters.
     for (var i = 0; i < this.chars.length; i++) {
