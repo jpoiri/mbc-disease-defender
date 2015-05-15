@@ -175,6 +175,15 @@ module.exports = Menu;
   'use strict';
   function Play() {}
   Play.prototype = {
+
+    preload: function() {
+
+      this.game.load.image('spaceship-small', 'assets/images/spaceship-small.png');
+
+      // Load images.
+      this.game.load.image('bullet', 'assets/images/bullet.png');
+    },
+
     create: function() {
 
       this.readyTxt = this.game.add.bitmapText(this.game.world.centerX,
@@ -192,9 +201,14 @@ module.exports = Menu;
       this.defendTxt.alpha = 0;
       this.defendTxt.anchor.set(0.5);
 
-      this.game.add.tween(this.readyTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 1000, 0, true);
-      this.game.add.tween(this.startTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 3000, 0, true);
-      this.game.add.tween(this.defendTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 5000, 0, true);
+      this.spaceship = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'spaceship-small');
+      this.spaceship.anchor.set(0.5);
+      this.spaceship.alpha = 0;
+
+      this.game.add.tween(this.readyTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 500, 0, true);
+      this.game.add.tween(this.startTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 2500, 0, true);
+      this.game.add.tween(this.defendTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 4500, 0, true);
+      this.game.add.tween(this.spaceship).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
     },
     update: function() {
 
