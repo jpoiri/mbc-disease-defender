@@ -39,7 +39,7 @@ Menu.prototype = {
       {char: 'r', pos: [667,135]}
     ]
 
-    this.animatedChars = []; 
+    this.animatedChars = [];
 
     // Create animated letters.
     for (var i = 0; i < this.chars.length; i++) {
@@ -78,7 +78,7 @@ Menu.prototype = {
 
     // For every character create tween for the alpha 2 sec delay for each letter
     for (var i = 0; i < this.animatedChars.length; i++) {
-      ellapseTime = 200 * i;
+      ellapseTime = 125 * i;
       this.game.add.tween(this.animatedChars[i]).to( { alpha: 1 }, 200,
         Phaser.Easing.Linear.None, true,ellapseTime, 0, true);
     };
@@ -86,14 +86,14 @@ Menu.prototype = {
     // For every character create tween to display all letters.
     for (var i = 0; i < this.animatedChars.length; i++) {
       this.game.add.tween(this.animatedChars[i]).to( { alpha: 1 }, 1000,
-        Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
+        Phaser.Easing.Linear.None, true,ellapseTime + 700, 0, false);
     }
 
     // Display the start instruction.
-    this.game.add.tween(this.startTxt).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
+    this.game.add.tween(this.startTxt).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true,ellapseTime + 700, 0, false);
 
     // Display the logo.
-    this.game.add.tween(this.logo).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
+    this.game.add.tween(this.logo).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true,ellapseTime + 700, 0, false);
   },
 
   update: function() {
