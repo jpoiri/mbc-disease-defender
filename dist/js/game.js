@@ -134,12 +134,12 @@ Menu.prototype = {
     }
 
     for (var i = 0; i < this.animatedChars.length; i++) {
-      this.game.add.tween(this.animatedChars[i]).to( { alpha: 1 }, 2000,
+      this.game.add.tween(this.animatedChars[i]).to( { alpha: 1 }, 1000,
         Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
     }
 
-    this.game.add.tween(this.startTxt).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
-    this.game.add.tween(this.logo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
+    this.game.add.tween(this.startTxt).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
+    this.game.add.tween(this.logo).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
   },
 
   update: function() {
