@@ -7,7 +7,13 @@ Play.prototype = {
   preload: function () {
     this.game.load.image('spaceship-small', 'assets/images/ship-rotate-sm.png');
     this.game.load.image('spaceship-lives', 'assets/images/ship-sm.png')
-    this.game.load.image('enemy', 'assets/images/enemy.png');
+    this.game.load.image('disease-a', 'assets/images/disease-a.png');
+    this.game.load.image('disease-b', 'assets/images/disease-b.png');
+    this.game.load.image('disease-c', 'assets/images/disease-c.png');
+    this.game.load.image('disease-d', 'assets/images/disease-d.png');
+    this.game.load.image('disease-e', 'assets/images/disease-e.png');
+    this.game.load.image('disease-f', 'assets/images/disease-f.png');
+    this.game.load.image('disease-g', 'assets/images/disease-g.png');
     this.game.load.image('bullet', 'assets/images/bullet.png');
   },
 
@@ -35,6 +41,8 @@ Play.prototype = {
 
     this.createText();
 
+    this.diseaseNames = ['disease-a','disease-b','disease-c', 'disease-d', 'disease-e', 'disease-f', 'disease-g'];
+
     // start the collision engine.
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.enemies = this.game.add.group();
@@ -45,7 +53,10 @@ Play.prototype = {
     this.game.time.events.loop(Phaser.Timer.SECOND * this.spawnInterval, function() {
 
       if (this.enemies.length < this.maxSpawnEnemies) {
-        var enemy = this.enemies.create(this.game.world.randomX, this.game.world.randomY, 'enemy');
+
+        var diseaseName = this.diseaseNames[Math.floor((Math.random() * 7))];
+
+        var enemy = this.enemies.create(this.game.world.randomX, this.game.world.randomY, diseaseName);
         enemy.alpha = 0;
         //Change the alpha in 1 sec.
         this.game.add.tween(enemy).to({alpha: 1}, 500, Phaser.Easing.Linear.None, true, 500, 0, false);
