@@ -12,6 +12,9 @@ Menu.prototype = {
     this.game.load.image('bluecross-logo-large', 'assets/images/cross-large.png');
     // Load images.
     this.game.load.image('gplaypattern', 'assets/images/gplaypattern.png');
+    // Load images.
+    this.game.load.image('bright_squares', 'assets/images/bright_squares.png');
+
   },
   create: function() {
 
@@ -39,17 +42,17 @@ Menu.prototype = {
       {char: 'r', pos: [667,135]}
     ]
 
-    this.animatedChars = [];
+    this.bitmapChars = [];
 
     // Create animated letters.
     for (var i = 0; i < this.chars.length; i++) {
 
-      var animatedChar = this.game.add.bitmapText(this.chars[i].pos[0],
+      var bitmapChar = this.game.add.bitmapText(this.chars[i].pos[0],
         this.chars[i].pos[1], 'new-york-escape-cond', this.chars[i].char, 130);
 
       // set the letter to be invincible by default.
-      animatedChar.alpha = 0;
-      this.animatedChars.push(animatedChar);
+      bitmapChar.alpha = 0;
+      this.bitmapChars.push(bitmapChar);
     }
 
     // Create the start instruction.
@@ -77,15 +80,15 @@ Menu.prototype = {
     var ellapseTime = 0;
 
     // For every character create tween for the alpha 2 sec delay for each letter
-    for (var i = 0; i < this.animatedChars.length; i++) {
+    for (var i = 0; i < this.bitmapChars.length; i++) {
       ellapseTime = 150 * i;
-      this.game.add.tween(this.animatedChars[i]).to( { alpha: 1 }, 150,
+      this.game.add.tween(this.bitmapChars[i]).to( { alpha: 1 }, 150,
         Phaser.Easing.Linear.None, true,ellapseTime, 0, true);
     };
 
     // For every character create tween to display all letters.
-    for (var i = 0; i < this.animatedChars.length; i++) {
-      this.game.add.tween(this.animatedChars[i]).to( { alpha: 1 }, 1000,
+    for (var i = 0; i < this.bitmapChars.length; i++) {
+      this.game.add.tween(this.bitmapChars[i]).to( { alpha: 1 }, 1000,
         Phaser.Easing.Linear.None, true,ellapseTime + 1000, 0, false);
     }
 
