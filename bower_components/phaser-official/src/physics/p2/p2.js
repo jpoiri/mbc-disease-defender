@@ -10130,7 +10130,7 @@ function Shape(type){
      *     groundShape .collisionGroup = GROUND;
      *
      *     // Assign groups that each shape collide with.
-     *     // Note that the players can collide with ground and enemies, but not with other players.
+     *     // Note that the players can collide with ground and diseases, but not with other players.
      *     player1Shape.collisionMask = ENEMY | GROUND;
      *     player2Shape.collisionMask = ENEMY | GROUND;
      *     enemyShape  .collisionMask = PLAYER | GROUND;

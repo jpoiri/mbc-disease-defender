@@ -45,18 +45,18 @@ Play.prototype = {
 
     // start the collision engine.
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.enemies = this.game.add.group();
-    this.enemies.enableBody = true;
-    this.enemies.setAll('alpha', '0');
+    this.diseases = this.game.add.group();
+    this.diseases.enableBody = true;
+    this.diseases.setAll('alpha', '0');
 
     //Generated a new enemy every 1 sec.
     this.game.time.events.loop(Phaser.Timer.SECOND * this.spawnInterval, function() {
 
-      if (this.enemies.length < this.maxSpawnEnemies) {
+      if (this.diseases.length < this.maxSpawnEnemies) {
 
-        var diseaseName = this.diseaseNames[Math.floor((Math.random() * 7))];
+        var diseaseName = this.diseaseNames[Math.floor((Math.random() * 6))];
 
-        var enemy = this.enemies.create(this.game.world.randomX, this.game.world.randomY, diseaseName);
+        var enemy = this.diseases.create(this.game.world.randomX, this.game.world.randomY, diseaseName);
         enemy.alpha = 0;
         //Change the alpha in 1 sec.
         this.game.add.tween(enemy).to({alpha: 1}, 500, Phaser.Easing.Linear.None, true, 500, 0, false);
@@ -76,7 +76,7 @@ Play.prototype = {
     //this.game.add.tween(this.startTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 2500, 0, true);
     //this.game.add.tween(this.defendTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 4500, 0, true);
     //this.game.add.tween(this.ship).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
-    //this.game.add.tween(this.enemies).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
+    //this.game.add.tween(this.diseases).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
   },
   update: function () {
 
@@ -90,7 +90,7 @@ Play.prototype = {
     //Player ship follows the mouse
     this.ship.rotation = this.game.physics.arcade.moveToPointer(this.ship, 60, this.game.input.activePointer, 500);
 
-    this.enemies.forEach(this.game.physics.arcade.moveToObject, this.game.physics.arcade, false, this.ship, 60);
+    this.diseases.forEach(this.game.physics.arcade.moveToObject, this.game.physics.arcade, false, this.ship, 60);
 
     if (this.game.input.mousePointer.isDown) {
 

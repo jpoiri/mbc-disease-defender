@@ -24,7 +24,7 @@ Menu.prototype = {
     this.game.stage.backgroundColor = '#ffffff';
 
     //  A grid background
-    this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'gplaypattern');
+    //this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'gplaypattern');
 
     /*
     this.chars = [
