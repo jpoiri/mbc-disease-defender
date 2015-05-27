@@ -17,42 +17,56 @@ Play.prototype = {
     this.game.load.image('bullet', 'assets/images/bullet.png');
   },
 
-  createText: function() {
-    this.readyTxt = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, 'new-york-escape-cond', 'Ready!', 130);
-    this.readyTxt.alpha = 0;
-    this.readyTxt.anchor.set(0.5);
+  createBitmapText: function (text) {
+    var bitmapText = bitmapText = this.game.add.bitmapText(this.game.world.centerX,
+        this.game.world.centerY, 'new-york-escape-cond', text, 130);
+    bitmapText.alpha = 0;
+    bitmapText.anchor.set(0.5);
 
-    this.startTxt = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, 'new-york-escape-cond', 'Start!', 130);
-    this.startTxt.alpha = 0;
-    this.startTxt.anchor.set(0.5);
-
-    this.defendTxt = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, 'new-york-escape-cond', 'Defend!', 130);
-    this.defendTxt.alpha = 0;
-    this.defendTxt.anchor.set(0.5);
+    return bitmapText;
   },
 
-  create: function () {
+  createScore: function() {
+    return this.game.add.bitmapText(10,
+      10, 'new-york-escape-cond', '0', 50);
+  },
 
-    this.maxSpawnEnemies = 100;
-    this.spawnInterval = 1.25;
+  createBulletsGroup: function() {
+    var bulletsGrp = this.game.add.group();
+    bulletsGrp.enableBody = true;
+    bulletsGrp.createMultiple(50, 'bullet');
+    bulletsGrp.addAll('checkWorldBounds', true);
+    bulletsGrp.addAll('outOfBoundsKill', true);
+    return bulletsGrp;
+  },
 
-    this.createText();
+  createDiseaseGroup: function() {
+    var diseaseGrp = this.game.add.group();
+    diseaseGrp.enableBody = true;
+    diseaseGrp.setAll('alpha', '0');
+    return diseaseGrp;
+  },
 
-    this.diseaseNames = ['disease-a','disease-b','disease-c', 'disease-d', 'disease-e', 'disease-f', 'disease-g'];
+  generateDiseases: function(spawnInternal, maxSpawnEnemies) {
 
-    // start the collision engine.
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.diseaseNames = [
+      'disease-a',
+      'disease-b',
+      'disease-c',
+      'disease-d',
+      'disease-e',
+      'disease-f',
+      'disease-g'
+    ];
+
     this.diseases = this.game.add.group();
     this.diseases.enableBody = true;
     this.diseases.setAll('alpha', '0');
 
     //Generated a new enemy every 1 sec.
-    this.game.time.events.loop(Phaser.Timer.SECOND * this.spawnInterval, function() {
+    this.game.time.events.loop(Phaser.Timer.SECOND * spawnInternal, function () {
 
-      if (this.diseases.length < this.maxSpawnEnemies) {
+      if (this.diseases.length < maxSpawnEnemies) {
 
         var diseaseName = this.diseaseNames[Math.floor((Math.random() * 6))];
 
@@ -63,13 +77,35 @@ Play.prototype = {
       }
     }, this);
 
+  },
+
+  create: function () {
+
+    this.maxSpawnEnemies = 100;
+    this.spawnInterval = 1.25;
+    this.fireRate = 50;
+    this.nextFire = 0;
+    this.score = 0;
+
+    this.readyTxt = this.createBitmapText('Ready!');
+    this.startTxt = this.createBitmapText('Start!');
+    this.defendTxt =  this.createBitmapText('Defend!');
+    this.scoreTxt = this.createScore();
+
+    // start the collision engine.
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    this.generateDiseases(this.spawnInterval, this.maxSpawnEnemies);
+
+    this.bullets = this.createBulletsGroup();
+
     // Add player ship
     this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'spaceship-small');
-    this.ship.anchor.set(0.5);
-    //this.ship.alpha = 0;
 
     this.game.physics.enable(this.ship, Phaser.Physics.ARCADE);
 
+    this.ship.anchor.set(0.5);
+    //this.ship.alpha = 0;
     this.ship.body.allowRotation = false;
 
     //this.game.add.tween(this.readyTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 500, 0, true);
@@ -80,21 +116,50 @@ Play.prototype = {
   },
   update: function () {
 
-    this.game.add.bitmapText(10,
-      10, 'new-york-escape-cond', '0', 50);
-
     for (var i = 1; i < 4; i++) {
       this.game.add.sprite(this.game.world.width - (70 * i), 10, 'spaceship-lives');
     }
 
-    //Player ship follows the mouse
-    this.ship.rotation = this.game.physics.arcade.moveToPointer(this.ship, 60, this.game.input.activePointer, 500);
+    // Player ship follows the mouse
+    if (!this.battleMode) {
+
+      // When player is moving remove drag.
+      this.ship.body.drag.set(1);
+
+      this.ship.rotation = this.game.physics.arcade.moveToPointer(this.ship, 60, this.game.input.activePointer, 500);
+
+    } else {
+
+      // When player is in shooting position need add drag to immobilize ship.
+      this.ship.body.drag.set(1000);
+
+      // Update the ship rotation to match the angle of mouse pointer
+      this.ship.rotation = this.game.physics.arcade.angleToPointer(this.ship);
+    }
 
     this.diseases.forEach(this.game.physics.arcade.moveToObject, this.game.physics.arcade, false, this.ship, 60);
 
     if (this.game.input.mousePointer.isDown) {
 
+      if (this.game.time.now > this.nextFire && this.bullets.countDead() > 0) {
+
+        this.nextFire = this.game.time.now + this.fireRate;
+
+        var bullet = this.bullets.getFirstDead();
+
+        bullet.reset(this.ship.x - 8, this.ship.y - 8);
+
+        this.game.physics.arcade.moveToPointer(bullet, 300);
+      }
+
+      this.battleMode = true;
     }
+
+    if (this.game.input.mousePointer.isUp) {
+      this.battleMode = false;
+    }
+
+    this.scoreTxt.setText('' + this.score++);
   },
 
 };

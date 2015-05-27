@@ -9,13 +9,10 @@ Menu.prototype = {
     this.game.load.bitmapFont('new-york-escape-cond',
       'assets/fonts/new-york-escape-cond.png', 'assets/fonts/new-york-escape-cond.fnt');
 
-    // Load bitmap fonts.
     this.game.load.bitmapFont('new-york-escape-cond-grad',
       'assets/fonts/new-york-escape-cond-grad.png', 'assets/fonts/new-york-escape-cond-grad.fnt');
 
-    // Load images.
-    this.game.load.image('logo', 'assets/images/logo-lg.png');
-    // Load images.
+    // Load image
     this.game.load.image('gplaypattern', 'assets/images/gplaypattern.png');
   },
   create: function() {
@@ -24,26 +21,7 @@ Menu.prototype = {
     this.game.stage.backgroundColor = '#ffffff';
 
     //  A grid background
-    //this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'gplaypattern');
-
-    /*
-    this.chars = [
-      {char: 'D', pos: [120,30]},
-      {char: 'i', pos: [214,30]},
-      {char: 's', pos: [249,30]},
-      {char: 'e', pos: [334,30]},
-      {char: 'a', pos: [422,30]},
-      {char: 's', pos: [515,30]},
-      {char: 'e', pos: [600,30]},
-      {char: 'D', pos: [40,135]},
-      {char: 'e', pos: [133,135]},
-      {char: 'f', pos: [221,135]},
-      {char: 'e', pos: [306,135]},
-      {char: 'n', pos: [392,135]},
-      {char: 'd', pos: [487,135]},
-      {char: 'e', pos: [580,135]},
-      {char: 'r', pos: [667,135]}
-    ]*/
+    this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'gplaypattern');
 
     this.chars = [
       {char: 'D', pos: [120,130]},
@@ -65,7 +43,7 @@ Menu.prototype = {
 
     this.bitmapChars = [];
 
-    // Create animated letters.
+    // Create a bitmap text for each letter so we can animated it.
     for (var i = 0; i < this.chars.length; i++) {
 
       var bitmapChar = this.game.add.bitmapText(this.chars[i].pos[0],
@@ -73,6 +51,7 @@ Menu.prototype = {
 
       // set the letter to be invincible by default.
       bitmapChar.alpha = 0;
+
       this.bitmapChars.push(bitmapChar);
     }
 
@@ -88,15 +67,6 @@ Menu.prototype = {
 
     // Set the start instruction to be invincible by default.
     this.startTxt.alpha = 0;
-
-    // Create the blue cross logo.
-    //this.logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 50, 'logo');
-
-    // Set the blue cross logo to be anchored to the center position.
-   // this.logo.anchor.set(0.5);
-
-    // Set the blue cross logo to be invincible by default.
-    //this.logo.alpha = 0;
 
     var ellapseTime = 0;
 
@@ -115,9 +85,6 @@ Menu.prototype = {
 
     // Display the start instruction.
     this.game.add.tween(this.startTxt).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true,ellapseTime + 700, 0, false);
-
-    // Display the logo.
-    //this.game.add.tween(this.logo).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true,ellapseTime + 700, 0, false);
   },
 
   update: function() {

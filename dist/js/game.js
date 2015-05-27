@@ -74,13 +74,10 @@ Menu.prototype = {
     this.game.load.bitmapFont('new-york-escape-cond',
       'assets/fonts/new-york-escape-cond.png', 'assets/fonts/new-york-escape-cond.fnt');
 
-    // Load bitmap fonts.
     this.game.load.bitmapFont('new-york-escape-cond-grad',
       'assets/fonts/new-york-escape-cond-grad.png', 'assets/fonts/new-york-escape-cond-grad.fnt');
 
-    // Load images.
-    this.game.load.image('logo', 'assets/images/logo-lg.png');
-    // Load images.
+    // Load image
     this.game.load.image('gplaypattern', 'assets/images/gplaypattern.png');
   },
   create: function() {
@@ -89,26 +86,7 @@ Menu.prototype = {
     this.game.stage.backgroundColor = '#ffffff';
 
     //  A grid background
-    //this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'gplaypattern');
-
-    /*
-    this.chars = [
-      {char: 'D', pos: [120,30]},
-      {char: 'i', pos: [214,30]},
-      {char: 's', pos: [249,30]},
-      {char: 'e', pos: [334,30]},
-      {char: 'a', pos: [422,30]},
-      {char: 's', pos: [515,30]},
-      {char: 'e', pos: [600,30]},
-      {char: 'D', pos: [40,135]},
-      {char: 'e', pos: [133,135]},
-      {char: 'f', pos: [221,135]},
-      {char: 'e', pos: [306,135]},
-      {char: 'n', pos: [392,135]},
-      {char: 'd', pos: [487,135]},
-      {char: 'e', pos: [580,135]},
-      {char: 'r', pos: [667,135]}
-    ]*/
+    this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'gplaypattern');
 
     this.chars = [
       {char: 'D', pos: [120,130]},
@@ -130,7 +108,7 @@ Menu.prototype = {
 
     this.bitmapChars = [];
 
-    // Create animated letters.
+    // Create a bitmap text for each letter so we can animated it.
     for (var i = 0; i < this.chars.length; i++) {
 
       var bitmapChar = this.game.add.bitmapText(this.chars[i].pos[0],
@@ -138,6 +116,7 @@ Menu.prototype = {
 
       // set the letter to be invincible by default.
       bitmapChar.alpha = 0;
+
       this.bitmapChars.push(bitmapChar);
     }
 
@@ -153,15 +132,6 @@ Menu.prototype = {
 
     // Set the start instruction to be invincible by default.
     this.startTxt.alpha = 0;
-
-    // Create the blue cross logo.
-    //this.logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 50, 'logo');
-
-    // Set the blue cross logo to be anchored to the center position.
-   // this.logo.anchor.set(0.5);
-
-    // Set the blue cross logo to be invincible by default.
-    //this.logo.alpha = 0;
 
     var ellapseTime = 0;
 
@@ -180,9 +150,6 @@ Menu.prototype = {
 
     // Display the start instruction.
     this.game.add.tween(this.startTxt).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true,ellapseTime + 700, 0, false);
-
-    // Display the logo.
-    //this.game.add.tween(this.logo).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true,ellapseTime + 700, 0, false);
   },
 
   update: function() {
@@ -214,42 +181,56 @@ Play.prototype = {
     this.game.load.image('bullet', 'assets/images/bullet.png');
   },
 
-  createText: function() {
-    this.readyTxt = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, 'new-york-escape-cond', 'Ready!', 130);
-    this.readyTxt.alpha = 0;
-    this.readyTxt.anchor.set(0.5);
+  createBitmapText: function (text) {
+    var bitmapText = bitmapText = this.game.add.bitmapText(this.game.world.centerX,
+        this.game.world.centerY, 'new-york-escape-cond', text, 130);
+    bitmapText.alpha = 0;
+    bitmapText.anchor.set(0.5);
 
-    this.startTxt = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, 'new-york-escape-cond', 'Start!', 130);
-    this.startTxt.alpha = 0;
-    this.startTxt.anchor.set(0.5);
-
-    this.defendTxt = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, 'new-york-escape-cond', 'Defend!', 130);
-    this.defendTxt.alpha = 0;
-    this.defendTxt.anchor.set(0.5);
+    return bitmapText;
   },
 
-  create: function () {
+  createScore: function() {
+    return this.game.add.bitmapText(10,
+      10, 'new-york-escape-cond', '0', 50);
+  },
 
-    this.maxSpawnEnemies = 100;
-    this.spawnInterval = 1.25;
+  createBulletsGroup: function() {
+    var bulletsGrp = this.game.add.group();
+    bulletsGrp.enableBody = true;
+    bulletsGrp.createMultiple(50, 'bullet');
+    bulletsGrp.addAll('checkWorldBounds', true);
+    bulletsGrp.addAll('outOfBoundsKill', true);
+    return bulletsGrp;
+  },
 
-    this.createText();
+  createDiseaseGroup: function() {
+    var diseaseGrp = this.game.add.group();
+    diseaseGrp.enableBody = true;
+    diseaseGrp.setAll('alpha', '0');
+    return diseaseGrp;
+  },
 
-    this.diseaseNames = ['disease-a','disease-b','disease-c', 'disease-d', 'disease-e', 'disease-f', 'disease-g'];
+  generateDiseases: function(spawnInternal, maxSpawnEnemies) {
 
-    // start the collision engine.
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.diseaseNames = [
+      'disease-a',
+      'disease-b',
+      'disease-c',
+      'disease-d',
+      'disease-e',
+      'disease-f',
+      'disease-g'
+    ];
+
     this.diseases = this.game.add.group();
     this.diseases.enableBody = true;
     this.diseases.setAll('alpha', '0');
 
     //Generated a new enemy every 1 sec.
-    this.game.time.events.loop(Phaser.Timer.SECOND * this.spawnInterval, function() {
+    this.game.time.events.loop(Phaser.Timer.SECOND * spawnInternal, function () {
 
-      if (this.diseases.length < this.maxSpawnEnemies) {
+      if (this.diseases.length < maxSpawnEnemies) {
 
         var diseaseName = this.diseaseNames[Math.floor((Math.random() * 6))];
 
@@ -260,13 +241,35 @@ Play.prototype = {
       }
     }, this);
 
+  },
+
+  create: function () {
+
+    this.maxSpawnEnemies = 100;
+    this.spawnInterval = 1.25;
+    this.fireRate = 50;
+    this.nextFire = 0;
+    this.score = 0;
+
+    this.readyTxt = this.createBitmapText('Ready!');
+    this.startTxt = this.createBitmapText('Start!');
+    this.defendTxt =  this.createBitmapText('Defend!');
+    this.scoreTxt = this.createScore();
+
+    // start the collision engine.
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    this.generateDiseases(this.spawnInterval, this.maxSpawnEnemies);
+
+    this.bullets = this.createBulletsGroup();
+
     // Add player ship
     this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'spaceship-small');
-    this.ship.anchor.set(0.5);
-    //this.ship.alpha = 0;
 
     this.game.physics.enable(this.ship, Phaser.Physics.ARCADE);
 
+    this.ship.anchor.set(0.5);
+    //this.ship.alpha = 0;
     this.ship.body.allowRotation = false;
 
     //this.game.add.tween(this.readyTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 500, 0, true);
@@ -277,21 +280,50 @@ Play.prototype = {
   },
   update: function () {
 
-    this.game.add.bitmapText(10,
-      10, 'new-york-escape-cond', '0', 50);
-
     for (var i = 1; i < 4; i++) {
       this.game.add.sprite(this.game.world.width - (70 * i), 10, 'spaceship-lives');
     }
 
-    //Player ship follows the mouse
-    this.ship.rotation = this.game.physics.arcade.moveToPointer(this.ship, 60, this.game.input.activePointer, 500);
+    // Player ship follows the mouse
+    if (!this.battleMode) {
+
+      // When player is moving remove drag.
+      this.ship.body.drag.set(1);
+
+      this.ship.rotation = this.game.physics.arcade.moveToPointer(this.ship, 60, this.game.input.activePointer, 500);
+
+    } else {
+
+      // When player is in shooting position need add drag to immobilize ship.
+      this.ship.body.drag.set(1000);
+
+      // Update the ship rotation to match the angle of mouse pointer
+      this.ship.rotation = this.game.physics.arcade.angleToPointer(this.ship);
+    }
 
     this.diseases.forEach(this.game.physics.arcade.moveToObject, this.game.physics.arcade, false, this.ship, 60);
 
     if (this.game.input.mousePointer.isDown) {
 
+      if (this.game.time.now > this.nextFire && this.bullets.countDead() > 0) {
+
+        this.nextFire = this.game.time.now + this.fireRate;
+
+        var bullet = this.bullets.getFirstDead();
+
+        bullet.reset(this.ship.x - 8, this.ship.y - 8);
+
+        this.game.physics.arcade.moveToPointer(bullet, 300);
+      }
+
+      this.battleMode = true;
     }
+
+    if (this.game.input.mousePointer.isUp) {
+      this.battleMode = false;
+    }
+
+    this.scoreTxt.setText('' + this.score++);
   },
 
 };
