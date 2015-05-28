@@ -20551,7 +20551,7 @@ Phaser.Group.prototype.create = function (x, y, key, frame, exists) {
 /**
 * Creates multiple Phaser.Sprite objects and adds them to the top of this group.
 *
-* Useful if you need to quickly generate a pool of identical sprites, such as bullets.
+* Useful if you need to quickly generate a pool of identical sprites, such as bulletGrp.
 *
 * By default the sprites will be set to not exist and will be positioned at 0, 0 (relative to the group.x/y).
 * Use {@link #classType} to change the type of object creaded.
@@ -35629,7 +35629,7 @@ Phaser.Component.LifeSpan.prototype = {
     * It is automatically decremented by the millisecond equivalent of `game.time.physicsElapsed` each frame.
     * When it reaches zero it will call the `kill` method.
     *
-    * Very handy for particles, bullets, collectibles, or any other short-lived entity.
+    * Very handy for particles, bulletGrp, collectibles, or any other short-lived entity.
     *
     * @property {number} lifespan
     * @default
@@ -61536,7 +61536,7 @@ Phaser.LinkedList.prototype.constructor = Phaser.LinkedList;
 *
 * Game Objects (such as Sprites) can only belong to 1 physics system, but you can have multiple systems active in a single game.
 *
-* For example you could have P2 managing a polygon-built terrain landscape that an vehicle drives over, while it could be firing bullets that use the
+* For example you could have P2 managing a polygon-built terrain landscape that an vehicle drives over, while it could be firing bulletGrp that use the
 * faster (due to being much simpler) Arcade Physics system.
 *
 * @class Phaser.Physics

@@ -138,7 +138,7 @@ p2 and Arcade running together
  
 Why on earth might you want to have both running? Well for a lot of games I would say there is what you could call 'simple' and 'advanced' requirements. For example you could have a nice complex polygon terrain all handled by p2, with a car body with  motors / constraints / springs driving happily across it.
  
-But what if you wanted that car to be able to fire up to shoot some aliens overhead? Assuming you can fit those aliens into clean AABB shapes then it's now entirely possible to have the car itself controlled by p2, driving over a p2 managed landscape, but when you shoot it launches a stream of bullets managed entirely by Arcade Physics, and collision with the aliens who are all running under Arcade Physics too. In short you're leaving p2 to deal with just a handful of complex bodies and motion and not bogging it down with ultra simple requirements.
+But what if you wanted that car to be able to fire up to shoot some aliens overhead? Assuming you can fit those aliens into clean AABB shapes then it's now entirely possible to have the car itself controlled by p2, driving over a p2 managed landscape, but when you shoot it launches a stream of bulletGrp managed entirely by Arcade Physics, and collision with the aliens who are all running under Arcade Physics too. In short you're leaving p2 to deal with just a handful of complex bodies and motion and not bogging it down with ultra simple requirements.
  
 I'm not suggesting that all games will need this, but at least you have the option now.
  

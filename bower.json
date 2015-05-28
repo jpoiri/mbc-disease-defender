@@ -2,6 +2,7 @@
   "name": "mbc-disease-defender",
   "version": "0.0.0",
   "dependencies": {
-    "phaser-official": "~2.3.0"
+    "phaser-official": "~2.3.0",
+    "lodash": "~3.9.3"
   }
 }

@@ -1984,7 +1984,7 @@ There is an extensive [Migration Guide](https://github.com/photonstorm/phaser/bl
 * Added Body.skipQuadTree boolean for more fine-grained control over when a body is added to the World QuadTree.
 * Re-implemented Angular Velocity and Angular Acceleration on the Sprite.body and created 2 new examples to show use.
 * Added Sprite.fixedToCamera boolean. A Sprite that is fixed to the camera doesn't move with the world, but has its x/y coordinates relative to the top-left of the camera.
-* Added Group.createMultiple - useful when you need to create a Group of identical sprites for pooling, such as bullets.
+* Added Group.createMultiple - useful when you need to create a Group of identical sprites for pooling, such as bulletGrp.
 * Added Group.total. Same as Group.length, but more in line with the rest of the Group naming.
 * Added Sprite.outOfBoundsKill boolean flag. Will automatically kill a sprite that leaves the game World bounds (off by default).
 * Lots of changes and fixes in ArcadePhysics, including:
