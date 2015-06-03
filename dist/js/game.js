@@ -182,12 +182,20 @@ module.exports = Menu;
 
 },{}],5:[function(require,module,exports){
 'use strict';
+
+var FIRE_RATE = 50;
+var SPAWN_INTERVAL = Phaser.Timer.SECOND * 1.25;
+var UPDATE_SPAWN_INTERVAL = Phaser.Timer * 2;
+var BITMAP_FONT = "new-york-escape-cond";
+var NUM_OF_BULLETS = 50;
+var NUM_OF_LIVES = 6;
+var SHOOTING_DRAG = 1000;
+var FLYING_DRAG = 1;
+
 function Play() {
 }
 Play.prototype = {
 
-  fireRate: 50,
-  spawnInterval: 1.25,
   score: 0,
   nextFire: 0,
   diseases: [
@@ -241,9 +249,102 @@ Play.prototype = {
     this.game.load.image('bullet', 'assets/images/bullet.png');
   },
 
+  /**
+   * Create game objects.
+   */
+  create: function () {
+
+    this.readyTxt = this.createText('Ready!');
+    this.startTxt = this.createText('Start!');
+    this.defendTxt = this.createText('Defend!');
+
+    // Create score sprite.
+    this.scoreTxt = this.createScore();
+
+    // Start collision engine.
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    // Create number of lives phaser group.
+    this.numberOfLivesGrp = this.createNumberOfLivesGroup(NUM_OF_LIVES);
+
+    // Create disease phaser group.
+    this.diseaseGrp = this.createDiseaseGroup();
+
+    // Generated a new disease every 1.25 sec.
+    this.spawnTimer = this.game.time.events.loop(SPAWN_INTERVAL, this.spawnDisease, this, this.diseaseGrp);
+
+    // Reduce the disease spawn time every 2 sec.
+    this.game.time.events.loop(UPDATE_SPAWN_INTERVAL, this.updateSpawnInterval, this);
+
+    // Create bullet group.
+    this.bulletGrp = this.createBulletGroup(NUM_OF_BULLETS);
+
+    // Create ship.
+    this.ship = this.createShip();
+
+    // Animated the intro text.
+    //this.game.add.tween(this.readyTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 500, 0, true);
+    //this.game.add.tween(this.startTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 2500, 0, true);
+    //this.game.add.tween(this.defendTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 4500, 0, true);
+    //this.game.add.tween(this.ship).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
+    //this.game.add.tween(this.diseases).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
+  },
+
+  /**
+   * Update game movement.
+   */
+  update: function () {
+
+    // Handle when bullet hits a disease.
+    this.game.physics.arcade.collide(this.bulletGrp, this.diseaseGrp, this.onBulletCollision, null, this);
+
+    // Handle when a disease hits the player.
+    this.game.physics.arcade.overlap(this.ship, this.diseaseGrp, this.onDiseaseCollision, null, this);
+
+    // Player ship follows the mouse
+    if (!this.battleMode) {
+
+      // When player is moving remove drag.
+      this.ship.body.drag.set(FLYING_DRAG);
+
+      this.ship.rotation = this.game.physics.arcade.moveToPointer(this.ship, 60, this.game.input.activePointer, 300, 300);
+
+    } else {
+
+      // When player is in shooting position need add drag to immobilize ship.
+      this.ship.body.drag.set(SHOOTING_DRAG);
+
+      // Update the ship rotation to match the angle of mouse pointer
+      this.ship.rotation = this.game.physics.arcade.angleToPointer(this.ship);
+    }
+
+    this.diseaseGrp.forEach(this.game.physics.arcade.moveToObject, this.game.physics.arcade, false, this.ship, 60);
+
+    if (this.game.input.mousePointer.isDown) {
+
+      if (this.game.time.now > this.nextFire && this.bulletGrp.countDead() > 0) {
+
+        this.nextFire = this.game.time.now + FIRE_RATE;
+
+        var bullet = this.bulletGrp.getFirstDead();
+
+        bullet.reset(this.ship.x - 8, this.ship.y - 8);
+
+        this.game.physics.arcade.moveToPointer(bullet, 300);
+      }
+
+      this.battleMode = true;
+    }
+
+    if (this.game.input.mousePointer.isUp) {
+      this.battleMode = false;
+    }
+
+  },
+
   createText: function (text) {
     var bitmapText = bitmapText = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, 'new-york-escape-cond', text, 130);
+      this.game.world.centerY, BITMAP_FONT, text, 130);
     bitmapText.alpha = 0;
     bitmapText.anchor.set(0.5);
     return bitmapText;
@@ -254,8 +355,7 @@ Play.prototype = {
    * @returns {Phaser.BitmapText}
    */
   createScore: function () {
-    return this.game.add.bitmapText(10,
-      10, 'new-york-escape-cond', '0', 50);
+    return this.game.add.bitmapText(10, 10, BITMAP_FONT, '0', 50);
   },
 
   /**
@@ -317,17 +417,15 @@ Play.prototype = {
     return ship;
   },
 
-  spawnDiseases: function (diseaseGrp, spawnInterval) {
-
-    //Generated a new enemy every 1 sec.
-    this.spawnTimer = this.game.time.events.loop(Phaser.Timer.SECOND * spawnInterval, this.spawnDisease, this, diseaseGrp);
-  },
-
-  spawnDisease: function(diseaseGrp) {
+  /**
+   * Spawn disease
+   * @param diseaseGrp The disease group
+   */
+  spawnDisease: function (diseaseGrp) {
 
     var disease = this.diseases[Math.floor((Math.random() * (this.diseases.length - 1)))];
-    var diseaseSprite = diseaseGrp.create(this.game.world.randomX, this.game.world.randomY, disease.img);
 
+    var diseaseSprite = diseaseGrp.create(this.game.world.randomX, this.game.world.randomY, disease.img);
     diseaseSprite.alpha = 0;
     diseaseSprite.points = disease.points;
 
@@ -335,12 +433,31 @@ Play.prototype = {
     this.game.add.tween(diseaseSprite).to({alpha: 1}, 300, Phaser.Easing.Linear.None, true, 300, 0, false);
   },
 
+  /**
+   * Update the spawn interval.
+   */
+  updateSpawnInterval: function () {
+    if (this.spawnTimer && this.spawnTimer.delay) {
+      this.spawnTimer.delay -= 80;
+    }
+  },
+
+  /**
+   * Handles when a bullet collides with a disease.
+   * @param bullet The bullet
+   * @param disease The disease.
+   */
   onBulletCollision: function (bullet, disease) {
     disease.kill();
     bullet.kill();
     this.updateScore(disease.points);
   },
 
+  /**
+   * Handles when the ship collides with a disease.
+   * @param ship The ship
+   * @param disease The disease
+   */
   onDiseaseCollision: function (ship, disease) {
     if (!this.ship.invincible && disease.alpha === 1) {
       this.hurt();
@@ -381,84 +498,7 @@ Play.prototype = {
   updateScore: function (points) {
     this.score += points;
     this.scoreTxt.setText(this.score.toString());
-  },
-
-  create: function () {
-
-    this.readyTxt = this.createText('Ready!');
-    this.startTxt = this.createText('Start!');
-    this.defendTxt = this.createText('Defend!');
-    this.scoreTxt = this.createScore();
-
-    // start the collision engine.
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
-
-    this.numberOfLivesGrp = this.createNumberOfLivesGroup(6);
-
-    this.diseaseGrp = this.createDiseaseGroup();
-
-    this.spawnDiseases(this.diseaseGrp, this.spawnInterval);
-
-    // Create bullet group.
-    this.bulletGrp = this.createBulletGroup(50);
-
-    // Create ship.
-    this.ship = this.createShip();
-
-    this.game.add.tween(this.readyTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 500, 0, true);
-    this.game.add.tween(this.startTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 2500, 0, true);
-    this.game.add.tween(this.defendTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 4500, 0, true);
-    //this.game.add.tween(this.ship).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
-    //this.game.add.tween(this.diseases).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
-  },
-  update: function () {
-    
-    // Handle when bullet hits a disease.
-    this.game.physics.arcade.collide(this.bulletGrp, this.diseaseGrp, this.onBulletCollision, null, this);
-
-    // Handle when a disease hits the player.
-    this.game.physics.arcade.overlap(this.ship, this.diseaseGrp, this.onDiseaseCollision, null, this);
-
-    // Player ship follows the mouse
-    if (!this.battleMode) {
-
-      // When player is moving remove drag.
-      this.ship.body.drag.set(1);
-
-      this.ship.rotation = this.game.physics.arcade.moveToPointer(this.ship, 60, this.game.input.activePointer, 300, 300);
-
-    } else {
-
-      // When player is in shooting position need add drag to immobilize ship.
-      this.ship.body.drag.set(1000);
-
-      // Update the ship rotation to match the angle of mouse pointer
-      this.ship.rotation = this.game.physics.arcade.angleToPointer(this.ship);
-    }
-
-    this.diseaseGrp.forEach(this.game.physics.arcade.moveToObject, this.game.physics.arcade, false, this.ship, 60);
-
-    if (this.game.input.mousePointer.isDown) {
-
-      if (this.game.time.now > this.nextFire && this.bulletGrp.countDead() > 0) {
-
-        this.nextFire = this.game.time.now + this.fireRate;
-
-        var bullet = this.bulletGrp.getFirstDead();
-
-        bullet.reset(this.ship.x - 8, this.ship.y - 8);
-
-        this.game.physics.arcade.moveToPointer(bullet, 300);
-      }
-
-      this.battleMode = true;
-    }
-
-    if (this.game.input.mousePointer.isUp) {
-      this.battleMode = false;
-    }
-
-  },
+  }
 
 };
 
