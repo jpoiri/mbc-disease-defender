@@ -255,7 +255,7 @@ Play.prototype = {
    */
   updateSpawnInterval: function () {
     if (this.spawnTimer && this.spawnTimer.delay) {
-      this.spawnTimer.delay -= 80;
+      this.spawnTimer.delay -= 100;
     }
   },
 
