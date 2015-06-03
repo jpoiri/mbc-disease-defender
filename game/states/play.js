@@ -2,7 +2,7 @@
 
 var FIRE_RATE = 50;
 var SPAWN_INTERVAL = Phaser.Timer.SECOND * 1.25;
-var UPDATE_SPAWN_INTERVAL = Phaser.Timer * 2;
+var UPDATE_SPAWN_INTERVAL = Phaser.Timer.SECOND * 2;
 var BITMAP_FONT = "new-york-escape-cond";
 var NUM_OF_BULLETS = 50;
 var NUM_OF_LIVES = 6;
@@ -255,7 +255,8 @@ Play.prototype = {
    */
   updateSpawnInterval: function () {
     if (this.spawnTimer && this.spawnTimer.delay) {
-      this.spawnTimer.delay -= 100;
+      this.spawnTimer.delay -= 80;
+      console.log(this.spawnTimer.delay);
     }
   },
 
