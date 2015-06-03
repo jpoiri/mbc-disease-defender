@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="93721105-1b1f-4bd4-914d-f9b08eeae8fb" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/js/game.js" afterPath="$PROJECT_DIR$/dist/js/game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game/states/play.js" afterPath="$PROJECT_DIR$/game/states/play.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="93721105-1b1f-4bd4-914d-f9b08eeae8fb" name="Default" comment="" />
     <ignored path="mbc-disease-defender.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -46,8 +42,8 @@
       <file leaf-file-name="play.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/game/states/play.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.6826688">
-              <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.5142392">
+              <caret line="186" column="59" selection-start-line="186" selection-start-column="57" selection-end-line="186" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -273,7 +269,7 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../djangoproject" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="editorconfig.notification" value="Applied .editorconfig settings" />
     <property name="FullScreen" value="false" />
@@ -574,12 +570,12 @@
       <workItem from="1432744995518" duration="411000" />
       <workItem from="1432747046851" duration="1288000" />
       <workItem from="1432748420748" duration="20436000" />
-      <workItem from="1433274880215" duration="5667000" />
+      <workItem from="1433274880215" duration="5867000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="100968000" />
+    <option name="totallyTimeSpent" value="101168000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="2578" height="1410" extended-state="0" />
@@ -977,8 +973,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game/states/play.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.6826688">
-          <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.5142392">
+          <caret line="186" column="59" selection-start-line="186" selection-start-column="57" selection-end-line="186" selection-end-column="59" />
           <folding />
         </state>
       </provider>
