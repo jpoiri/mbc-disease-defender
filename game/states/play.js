@@ -2,9 +2,14 @@
 
 var FIRE_RATE = 50;
 var SPAWN_INTERVAL = Phaser.Timer.SECOND * 1.25;
-var UPDATE_SPAWN_INTERVAL = Phaser.Timer * 2;
-var BITMAP_FONT = "new-york-escape-cond";
+var UPDATE_SPAWN_INTERVAL = Phaser.Timer.SECOND * 2;
+var FONT_KEY = "new-york-escape-cond";
+var SCORE_FONT_SIZE = 50;
+var TEXT_FONT_SIZE = 130;
 var NUM_OF_BULLETS = 50;
+var BULLET_OFFSET_X = 8;
+var BULLET_OFFSET_Y = 8;
+var BULLET_SPEED = 800;
 var NUM_OF_LIVES = 6;
 var SHOOTING_DRAG = 1000;
 var FLYING_DRAG = 1;
@@ -53,6 +58,9 @@ Play.prototype = {
     },
   ],
 
+  /**
+   * Preload game objects.
+   */
   preload: function () {
     this.game.load.image('spaceship-small', 'assets/images/ship-rotate-sm.png');
     this.game.load.image('spaceship-lives', 'assets/images/ship-sm.png')
@@ -100,11 +108,13 @@ Play.prototype = {
     this.ship = this.createShip();
 
     // Animated the intro text.
-    //this.game.add.tween(this.readyTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 500, 0, true);
-    //this.game.add.tween(this.startTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 2500, 0, true);
-    //this.game.add.tween(this.defendTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 4500, 0, true);
-    //this.game.add.tween(this.ship).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
-    //this.game.add.tween(this.diseases).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
+    this.game.add.tween(this.readyTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 500, 0, true);
+    this.game.add.tween(this.startTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 2500, 0, true);
+    this.game.add.tween(this.defendTxt).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 4500, 0, true);
+    this.game.add.tween(this.ship).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
+    this.game.add.tween(this.bulletGrp).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
+    this.game.add.tween(this.numberOfLivesGrp).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
+    this.game.add.tween(this.diseaseGrp).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 6500, 0, false);
   },
 
   /**
@@ -119,7 +129,7 @@ Play.prototype = {
     this.game.physics.arcade.overlap(this.ship, this.diseaseGrp, this.onDiseaseCollision, null, this);
 
     // Player ship follows the mouse
-    if (!this.battleMode) {
+    if (!this.shooting) {
 
       // When player is moving remove drag.
       this.ship.body.drag.set(FLYING_DRAG);
@@ -139,29 +149,60 @@ Play.prototype = {
 
     if (this.game.input.mousePointer.isDown) {
 
-      if (this.game.time.now > this.nextFire && this.bulletGrp.countDead() > 0) {
-
-        this.nextFire = this.game.time.now + FIRE_RATE;
-
-        var bullet = this.bulletGrp.getFirstDead();
-
-        bullet.reset(this.ship.x - 8, this.ship.y - 8);
-
-        this.game.physics.arcade.moveToPointer(bullet, 300);
+      if (this.isBulletAvailable()) {
+        this.fireBullet();
       }
 
-      this.battleMode = true;
+      this.shooting = true;
     }
 
     if (this.game.input.mousePointer.isUp) {
-      this.battleMode = false;
+      this.shooting = false;
     }
 
   },
 
+  /**
+   * Checks if there is a bullet available to fire.
+   * @returns {boolean}
+   */
+  isBulletAvailable: function() {
+    return (this.game.time.now > this.nextFire) && this.bulletGrp.countDead() > 0 ? true: false;
+  },
+
+  /**,
+   * Returns the next bullet.
+   * @returns {Phaser.Sprite}
+   */
+  getNextBullet: function() {
+    return this.bulletGrp ? this.bulletGrp.getFirstDead(): null;
+  },
+
+  /**
+   * Fire the bullet.
+   */
+  fireBullet: function() {
+
+    this.nextFire = this.game.time.now + FIRE_RATE;
+
+    // Get the next bullet to be fired.
+    var bullet = this.getNextBullet();
+
+    // Move the bullet position to be center with the ship.
+    bullet.reset(this.ship.x - BULLET_OFFSET_X, this.ship.y - BULLET_OFFSET_Y);
+
+    // Move the bullet position to the position of the mouse pointer.
+    this.game.physics.arcade.moveToPointer(bullet, BULLET_SPEED);
+  },
+
+  /**
+   * Create animated text.
+   * @param text The text.
+   * @returns {Phaser.BitmapText}
+   */
   createText: function (text) {
     var bitmapText = bitmapText = this.game.add.bitmapText(this.game.world.centerX,
-      this.game.world.centerY, BITMAP_FONT, text, 130);
+      this.game.world.centerY, FONT_KEY, text, TEXT_FONT_SIZE);
     bitmapText.alpha = 0;
     bitmapText.anchor.set(0.5);
     return bitmapText;
@@ -172,7 +213,7 @@ Play.prototype = {
    * @returns {Phaser.BitmapText}
    */
   createScore: function () {
-    return this.game.add.bitmapText(10, 10, BITMAP_FONT, '0', 50);
+    return this.game.add.bitmapText(10, 10, FONT_KEY, '0', SCORE_FONT_SIZE);
   },
 
   /**
@@ -182,11 +223,15 @@ Play.prototype = {
    */
   createNumberOfLivesGroup: function (numberOfLives) {
     var numberOfLivesGrp = this.game.add.group();
+
     if (numberOfLivesGrp) {
       for (var i = 1; i < (numberOfLives + 1); i++) {
         numberOfLivesGrp.create(this.game.world.width - (70 * i), 10, 'spaceship-lives');
       }
     }
+
+    //numberOfLivesGrp.set('alpha', 0);
+
     return numberOfLivesGrp;
   },
 
@@ -228,7 +273,7 @@ Play.prototype = {
     if (ship) {
       this.game.physics.enable(ship, Phaser.Physics.ARCADE);
       ship.anchor.set(0.5);
-      //this.ship.alpha = 0;
+      ship.alpha = 0;
       ship.body.allowRotation = false;
     }
     return ship;
@@ -312,6 +357,10 @@ Play.prototype = {
     }
   },
 
+  /**
+   * Update score
+   * @param points The points.
+   */
   updateScore: function (points) {
     this.score += points;
     this.scoreTxt.setText(this.score.toString());
